@@ -52,9 +52,6 @@ def get_recipe_json(url, category):
 
     return recipe
 
-# url = 'https://www.bbcgoodfood.com/recipes/next-level-spaghetti-bolognese/'
-# get_recipe_json('https://www.bbcgoodfood.com/recipes/next-level-spaghetti-bolognese')
-
 
 def get_list(content):
     l = []
@@ -76,7 +73,6 @@ def get_category_list(url):
 
 def get_recipes_from_content(content):
     return get_list(content.findAll('h3', attrs={'class': 'teaser-item__title'}))
-
 
 
 def get_recipe_list(category_list):
