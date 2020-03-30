@@ -50,32 +50,41 @@ def get_recipe_json(url, category):
 # get_recipe_json('https://www.bbcgoodfood.com/recipes/next-level-spaghetti-bolognese')
 
 
+def get_list(content):
+    l = []
+    for item in content:
+        i = item.find('a')
+        l.append({
+            'name': i.text.strip(),
+            'url': "https://www.bbcgoodfood.com" + i['href']
+        })
+    return l
+
+
 def get_category_list(url):
     response = requests.get(url, headers=headers, timeout=100)
     content = BeautifulSoup(response.content, 'html.parser')
 
     categories = content.findAll('h3', attrs={'class': 'category-item--title'})
-
-    category_list = []
-    for item in categories:
-        c = item.find('a')
-        category_list.append({
-            "name": c.text.strip(), 
-            "url": "https://www.bbcgoodfood.com" + c['href']
-        })
-
-    return category_list
+    return get_list(categories)
 
 
 def get_recipe_list(category_list):
+    list = []
     for item in category_list:
-        print(item)
+        response = requests.get(item['url'], headers=headers, timeout=100)
+        content = BeautifulSoup(response.content, 'html.parser')
+        
+        recipes = content.findAll('h3', attrs={'class': 'teaser-item__title'})
+        get_list(recipes)
+
 
 
 url = "https://www.bbcgoodfood.com/recipes/category/dishes"
-category_list = get_category_list(url)
-time.sleep(5)
+# category_list = get_category_list(url)
+# time.sleep(1)
 
+category_list = [{'name': 'Baked potato', 'url': 'https://www.bbcgoodfood.com/recipes/collection/baked-potato'}]
 get_recipe_list(category_list)
 
 
