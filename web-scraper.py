@@ -8,16 +8,22 @@ headers = {'User-Agent': user_agent}
 response = requests.get(url, headers=headers, timeout=100)
 content = BeautifulSoup(response.content, "html.parser")
 
-# recipe-header__title
-title = content.findAll('h1', attrs={"class": "recipe-header__title"})
-# print(title)
+title = content.find('h1', attrs={"class": "recipe-header__title"}).text
 
 ingredients_list = content.findAll('li', attrs={"class": "ingredients-list__item"})
+ingredients_array = []
+for item in ingredients_list:
+    ingredients_array.append(item['content'])
 
-# for item in ingredients_list:
-#     print(item)
+method = content.findAll('li', attrs={"class": "method__item"})
+method_array = []
+for item in method:
+    method_array.append(item.find('p').text)
 
-print(ingredients_list[1]['content'])
+recipe = {
+    "title": title,
+    "ingredients": ingredients_array,
+    "method": method_array
+}
 
-# print(content)
-# print(title[0].text)
+print(recipe)
