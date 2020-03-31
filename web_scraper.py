@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import time
+from database import insert_recipe
 
 root_url = "https://www.bbcgoodfood.com"
 user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36'
@@ -42,12 +43,16 @@ def get_recipe_json(url, category):
             if len(items) == 0:
                 continue
             else:
+                l = []
                 for i in items:
-                    ingredients_array.append(i['content'])
+                    l.append(i['content'])
+                ingredients_array.append(l)
         elif child.name == 'h3':
             ingredients_array.append(child.text)
         else:
             continue
+
+    print(ingredients_array)
 
     method = content.findAll('li', attrs={'class': 'method__item'})
     method_array = []
@@ -92,29 +97,35 @@ def get_recipes_from_content(content):
     return get_list(content.findAll('h3', attrs={'class': 'teaser-item__title'}))
 
 
-def get_recipe_list(category_list):
-    recipes = []
-    for item in category_list:
-        content = get_content_from_url(item['url'])
-        recipes.append(get_recipes_from_content(content))
-        time.sleep(1)   
+def get_recipes_from_category(category):
+    recipe_list = []
+    content = get_content_from_url(category['url'])
+    recipe_list.extend(get_recipes_from_content(content))
+    time.sleep(1)
+    
+    pages = content.findAll('li', attrs={'class': 'pager-item'})
+    for page in pages[:1]:
+        url = root_url + page.find('a')['href']
+        content = get_content_from_url(url)
+        recipe_list.extend(get_recipes_from_content(content))
+        time.sleep(1)
 
-        pages = content.findAll('li', attrs={'class': 'pager-item'})
-        for page in pages[1:]:
-            url = root_url + page.find('a')['href']
-            content = get_content_from_url(url)
-            recipes.append(get_recipes_from_content(content))
-            time.sleep(1)
+    return recipe_list
 
-    print(recipes)
 
+def scrape_and_store_recipes(url):
+    categories = get_category_list(url)
+
+    for category in categories:
+        recipe_list = get_recipes_from_category(category)
+    
+        for recipe in recipe_list:
+            json = get_recipe_json(recipe['url'], category['name'])
+            insert_recipe(json)
+    
+    print("Done - check Couchbase")
 
 
 url = "https://www.bbcgoodfood.com/recipes/category/dishes"
-# category_list = get_category_list(url)
-# time.sleep(1)
+scrape_and_store_recipes(url)
 
-# category_list = [{'name': 'Curry', 'url': 'https://www.bbcgoodfood.com/recipes/collection/curry'}]
-# get_recipe_list(category_list)
-
-get_recipe_json('https://www.bbcgoodfood.com/recipes/good-steak-kidney-pie', 'Pie')
