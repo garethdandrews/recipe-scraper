@@ -97,7 +97,7 @@ url = "https://www.bbcgoodfood.com/recipes/category/dishes"
 # category_list = get_category_list(url)
 # time.sleep(1)
 
-category_list = [{'name': 'Curry', 'url': 'https://www.bbcgoodfood.com/recipes/collection/curry'}]
-get_recipe_list(category_list)
+# category_list = [{'name': 'Curry', 'url': 'https://www.bbcgoodfood.com/recipes/collection/curry'}]
+# get_recipe_list(category_list)
 
 
