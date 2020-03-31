@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import time
-from database import insert_recipe
+import database
 
 root_url = "https://www.bbcgoodfood.com"
 user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36'
@@ -51,8 +51,6 @@ def get_recipe_json(url, category):
             ingredients_array.append(child.text)
         else:
             continue
-
-    print(ingredients_array)
 
     method = content.findAll('li', attrs={'class': 'method__item'})
     method_array = []
@@ -120,8 +118,19 @@ def scrape_and_store_recipes(url):
         recipe_list = get_recipes_from_category(category)
     
         for recipe in recipe_list:
-            json = get_recipe_json(recipe['url'], category['name'])
-            insert_recipe(json)
+            key = database.create_key(recipe['name'])
+            result = database.get_recipe(key)
+
+            if result == False:
+                json = get_recipe_json(recipe['url'], category['name'])
+                time.sleep(1)
+                database.insert_recipe(json)
+            else:
+                if category['name'] in result['category']:
+                    result['category'] += '_' + category['name']
+                    database.upsert_recipe(result)
+
+        print("Done category - " + category['name'])
     
     print("Done - check Couchbase")
 
