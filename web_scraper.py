@@ -17,10 +17,16 @@ def get_recipe_json(url, category):
     title = content.find('h1', attrs={'class': 'recipe-header__title'}).text
 
     prep_time = content.find('span', attrs={'class': 'recipe-details__cooking-time-prep'})
-    prep_time = prep_time.find('span').text
+    if prep_time != None:
+        prep_time = prep_time.find('span').text
 
     cook_time = content.find('span', attrs={'class': 'recipe-details__cooking-time-cook'})
-    cook_time = cook_time.find('span').text
+    if cook_time != None:
+        cook_time = cook_time.find('span').text
+
+    full_time = content.find('span', attrs={'class': 'recipe-details__cooking-time-full'})
+    if full_time != None:
+        full_time = full_time.text
 
     difficulty = content.find('section', attrs={'class': 'recipe-details__item recipe-details__item--skill-level'})
     difficulty = difficulty.find('span').text.strip()
@@ -28,10 +34,20 @@ def get_recipe_json(url, category):
     serves = content.find('section', attrs={'class': 'recipe-details__item recipe-details__item--servings'})
     serves = serves.find('span').text.strip()
 
-    ingredients_list = content.findAll('li', attrs={'class': 'ingredients-list__item'})
+    ingredients_list_content = content.find('div', attrs={'class': 'ingredients-list__content'})
     ingredients_array = []
-    for item in ingredients_list:
-        ingredients_array.append(item['content'])
+    for child in ingredients_list_content.contents:
+        if child.name == 'ul':
+            items = child.findAll('li', attrs={'class': 'ingredients-list__item'})
+            if len(items) == 0:
+                continue
+            else:
+                for i in items:
+                    ingredients_array.append(i['content'])
+        elif child.name == 'h3':
+            ingredients_array.append(child.text)
+        else:
+            continue
 
     method = content.findAll('li', attrs={'class': 'method__item'})
     method_array = []
@@ -43,6 +59,7 @@ def get_recipe_json(url, category):
         "category": category,
         'prepTime': prep_time,
         'cookTime': cook_time,
+        'fullTime': full_time,
         'difficulty': difficulty,
         'serves': serves,
         'ingredients': ingredients_array,
@@ -100,4 +117,4 @@ url = "https://www.bbcgoodfood.com/recipes/category/dishes"
 # category_list = [{'name': 'Curry', 'url': 'https://www.bbcgoodfood.com/recipes/collection/curry'}]
 # get_recipe_list(category_list)
 
-
+get_recipe_json('https://www.bbcgoodfood.com/recipes/good-steak-kidney-pie', 'Pie')
