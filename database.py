@@ -14,16 +14,16 @@ def create_key(title):
     return title.lower().replace(' ', '_')
 
 
-def insert_recipe(recipe_json):
+def insert_recipe(key, recipe_json):
     try:
-        cb.insert(create_key(recipe_json['title']), recipe_json)
+        cb.insert(key, recipe_json)
     except:
         print("Key already exists")
 
 
-def upsert_recipe(recipe_json):
+def upsert_recipe(key, recipe_json):
     try:
-        cb.insert(create_key(recipe_json['title']), recipe_json)
+        cb.upsert(key, recipe_json)
     except:
         print("Upsert error")
 
@@ -32,6 +32,6 @@ def get_recipe(key):
     try:
         return cb.get(key).value
     except:
-        return False
+        return None
 
 # print(cb.get('Lamb_vindaloo').value)

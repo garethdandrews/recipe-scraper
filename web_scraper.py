@@ -111,6 +111,10 @@ def get_recipes_from_category(category):
     return recipe_list
 
 
+# def add_tag_to_categories(json, tag):
+
+
+
 def scrape_and_store_recipes(url):
     categories = get_category_list(url)
 
@@ -121,18 +125,35 @@ def scrape_and_store_recipes(url):
             key = database.create_key(recipe['name'])
             result = database.get_recipe(key)
 
-            if result == False:
+            # Recipe isnt in database
+            if result == None:
                 json = get_recipe_json(recipe['url'], category['name'])
                 time.sleep(1)
-                database.insert_recipe(json)
+                database.insert_recipe(key, json)
+                print("Added recipe")
+            # Recipe is in database, check category tags
             else:
-                if category['name'] in result['category']:
-                    result['category'] += '_' + category['name']
-                    database.upsert_recipe(result)
+                category_tags = result['category']
+                if type(category_tags) == str:
+                    if category_tags != category['name']:
+                        category_tags = [category_tags, category['name']]
+                        result['category'] = category_tags
+                        database.upsert_recipe(key, result)
+                        print("Updated category tags")
+                elif type(category_tags) == list:
+                    if category['name'] not in category_tags:
+                        category_tags.append(category['name'])
+                        result['category'] = category_tags
+                        database.upsert_recipe(key, result)
+                        print("Updated category tags")
+                else:
+                    print("Unknown type")     
 
         print("Done category - " + category['name'])
     
     print("Done - check Couchbase")
+
+
 
 
 url = "https://www.bbcgoodfood.com/recipes/category/dishes"
