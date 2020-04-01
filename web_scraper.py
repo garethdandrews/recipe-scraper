@@ -111,10 +111,6 @@ def get_recipes_from_category(category):
     return recipe_list
 
 
-# def add_tag_to_categories(json, tag):
-
-
-
 def scrape_and_store_recipes(url):
     categories = get_category_list(url)
 
@@ -154,8 +150,19 @@ def scrape_and_store_recipes(url):
     print("Done - check Couchbase")
 
 
+urls = [
+"https://www.bbcgoodfood.com/recipes/category/dishes", "https://www.bbcgoodfood.com/recipes/category/everyday", 
+"https://www.bbcgoodfood.com/recipes/category/cuisines", "https://www.bbcgoodfood.com/recipes/category/meat", 
+"https://www.bbcgoodfood.com/recipes/category/fish", 
+"https://www.bbcgoodfood.com/recipes/category/fruit", 
+"https://www.bbcgoodfood.com/recipes/category/vegetables", "https://www.bbcgoodfood.com/recipes/category/grains-pulses", 
+"https://www.bbcgoodfood.com/recipes/category/dairy", "https://www.bbcgoodfood.com/recipes/category/chocolate",
+"https://www.bbcgoodfood.com/recipes/category/more-recipe-ideas", "https://www.bbcgoodfood.com/recipes/category/healthy", 
+"https://www.bbcgoodfood.com/recipes/category/quick-easy", "https://www.bbcgoodfood.com/recipes/category/vegetarian",
+"https://www.bbcgoodfood.com/recipes/category/seasonal", "https://www.bbcgoodfood.com/recipes/category/cakes-baking"
+]
 
-
-url = "https://www.bbcgoodfood.com/recipes/category/dishes"
-scrape_and_store_recipes(url)
+for url in urls:
+    scrape_and_store_recipes(url)
+    print("Done - " + url)
 
