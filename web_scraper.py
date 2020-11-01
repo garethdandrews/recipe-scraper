@@ -1,9 +1,8 @@
-from bs4 import BeautifulSoup
 import requests
-import time
-import database
+from bs4 import BeautifulSoup
 
-root_url = "https://www.bbcgoodfood.com"
+root_url = "https://www.bbcgoodfood.com/"
+
 user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36'
 headers = {'User-Agent': user_agent}
 
@@ -12,157 +11,30 @@ def get_content_from_url(url):
     return BeautifulSoup(response.content, 'html.parser')
 
 
-def get_recipe_json(url, category):
+def get_recipe(url):
     content = get_content_from_url(url)
 
-    title = content.find('h1', attrs={'class': 'recipe-header__title'}).text
+    title = content.find('h1').text
 
-    prep_time = content.find('span', attrs={'class': 'recipe-details__cooking-time-prep'})
-    if prep_time != None:
-        prep_time = prep_time.find('span').text
+    times = content.findAll('time')
 
-    cook_time = content.find('span', attrs={'class': 'recipe-details__cooking-time-cook'})
-    if cook_time != None:
-        cook_time = cook_time.find('span').text
+    # metadata (times, difficulty, servings)
+    metadata = {}
+    for item in times:
+        tmp = item.parent.previous_sibling.text[:-1]
+        metadata[tmp] = item.text
 
-    full_time = content.find('span', attrs={'class': 'recipe-details__cooking-time-full'})
-    if full_time != None:
-        full_time = full_time.text
-
-    difficulty = content.find('section', attrs={'class': 'recipe-details__item recipe-details__item--skill-level'})
-    difficulty = difficulty.find('span').text.strip()
-
-    serves = content.find('section', attrs={'class': 'recipe-details__item recipe-details__item--servings'})
-    serves = serves.find('span').text.strip()
-
-    ingredients_list_content = content.find('div', attrs={'class': 'ingredients-list__content'})
-    ingredients_array = []
-    for child in ingredients_list_content.contents:
-        if child.name == 'ul':
-            items = child.findAll('li', attrs={'class': 'ingredients-list__item'})
-            if len(items) == 0:
-                continue
-            else:
-                l = []
-                for i in items:
-                    l.append(i['content'])
-                ingredients_array.append(l)
-        elif child.name == 'h3':
-            ingredients_array.append(child.text)
-        else:
-            continue
-
-    method = content.findAll('li', attrs={'class': 'method__item'})
-    method_array = []
-    for item in method:
-        method_array.append(item.find('p').text)
+    metadata['difficulty'] = content.find(attrs={'class': 'masthead__skill-level'}).get_text()
+    metadata['servings'] = content.find(attrs={'class': 'masthead__servings'}).get_text()
 
     recipe = {
         'title': title,
-        "category": category,
-        'prepTime': prep_time,
-        'cookTime': cook_time,
-        'fullTime': full_time,
-        'difficulty': difficulty,
-        'serves': serves,
-        'ingredients': ingredients_array,
-        'method': method_array,
-        'url': url
+        'metadata': metadata
     }
 
-    return recipe
+    print(recipe)
+
+get_recipe('https://www.bbcgoodfood.com/recipes/old-delhi-style-butter-chicken')
 
 
-def get_list(content):
-    l = []
-    for item in content:
-        i = item.find('a')
-        l.append({
-            'name': i.text.strip(),
-            'url': root_url + i['href']
-        })
-    return l
-
-
-def get_category_list(url):
-    content = get_content_from_url(url)
-
-    categories = content.findAll('h3', attrs={'class': 'category-item--title'})
-    return get_list(categories)
-
-
-def get_recipes_from_content(content):
-    return get_list(content.findAll('h3', attrs={'class': 'teaser-item__title'}))
-
-
-def get_recipes_from_category(category):
-    recipe_list = []
-    content = get_content_from_url(category['url'])
-    recipe_list.extend(get_recipes_from_content(content))
-    time.sleep(1)
-    
-    pages = content.findAll('li', attrs={'class': 'pager-item'})
-    for page in pages[:1]:
-        url = root_url + page.find('a')['href']
-        content = get_content_from_url(url)
-        recipe_list.extend(get_recipes_from_content(content))
-        time.sleep(1)
-
-    return recipe_list
-
-
-def scrape_and_store_recipes(url):
-    categories = get_category_list(url)
-
-    for category in categories:
-        recipe_list = get_recipes_from_category(category)
-    
-        for recipe in recipe_list:
-            key = database.create_key(recipe['name'])
-            result = database.get_recipe(key)
-
-            # Recipe isnt in database
-            if result == None:
-                json = get_recipe_json(recipe['url'], category['name'])
-                time.sleep(1)
-                database.insert_recipe(key, json)
-                print("Added recipe")
-            # Recipe is in database, check category tags
-            else:
-                category_tags = result['category']
-                if type(category_tags) == str:
-                    if category_tags != category['name']:
-                        category_tags = [category_tags, category['name']]
-                        result['category'] = category_tags
-                        database.upsert_recipe(key, result)
-                        print("Updated category tags")
-                elif type(category_tags) == list:
-                    if category['name'] not in category_tags:
-                        category_tags.append(category['name'])
-                        result['category'] = category_tags
-                        database.upsert_recipe(key, result)
-                        print("Updated category tags")
-                else:
-                    print("Unknown type")     
-
-        print("Done category - " + category['name'])
-    
-    print("Done - check Couchbase")
-
-
-urls = [
-"https://www.bbcgoodfood.com/recipes/category/dishes", "https://www.bbcgoodfood.com/recipes/category/everyday", 
-"https://www.bbcgoodfood.com/recipes/category/cuisines", "https://www.bbcgoodfood.com/recipes/category/meat", 
-"https://www.bbcgoodfood.com/recipes/category/fish", 
-"https://www.bbcgoodfood.com/recipes/category/fruit", 
-"https://www.bbcgoodfood.com/recipes/category/vegetables", "https://www.bbcgoodfood.com/recipes/category/grains-pulses", 
-"https://www.bbcgoodfood.com/recipes/category/dairy", "https://www.bbcgoodfood.com/recipes/category/chocolate",
-"https://www.bbcgoodfood.com/recipes/category/more-recipe-ideas", "https://www.bbcgoodfood.com/recipes/category/healthy", 
-"https://www.bbcgoodfood.com/recipes/category/quick-easy", "https://www.bbcgoodfood.com/recipes/category/vegetarian",
-"https://www.bbcgoodfood.com/recipes/category/seasonal", "https://www.bbcgoodfood.com/recipes/category/cakes-baking"
-]
-
-for url in urls:
-    scrape_and_store_recipes(url)
-    print("Done - " + url)
-
+# def scrape_categories(url):
