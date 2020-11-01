@@ -17,7 +17,7 @@ def get_content_from_url(url):
 
 
 # gets a list of category urls from the recipes dropdown box
-def get_category_urls_from_dropdown(root_url):
+def get_category_urls_from_dropdown():
     soup = get_content_from_url(root_url)
     recipes_soup = soup.find('span', attrs={'class': 'main-nav__nav-text'}, text=re.compile("^recipes$", re.I)).parent.next_sibling
     categories_soup = recipes_soup.findChildren('span', text='see more...')
@@ -26,22 +26,22 @@ def get_category_urls_from_dropdown(root_url):
 
 # gets a list of collections from a category - 'collections' hold the list of recipes on bbcgoodfood
 def get_collections_from_category(category_url):
-    category_headings = get_content_from_url(category_url).findAll('h4')
-    return [category_heading.find('a').get('href') for category_heading in category_headings]
+    soup = get_content_from_url(category_url)
+    
+    return[category_heading.find('a').get('href') for category_heading in soup.findAll('h4')]
 
+lst = []
 
-lst = ['/recipes/category/all-vegetarian']
-
-for category_url in lst:
+collection_urls = []
+for category_url in get_category_urls_from_dropdown():
     url = root_url + category_url
 
-    collection_urls = []
-
-    
     if 'category' in url:
         collection_urls.append(get_collections_from_category(url))
     else:
         collection_urls.append(url)
+
+print(collection_urls)
     
 
 
