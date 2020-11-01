@@ -52,7 +52,7 @@ def get_recipe(url):
 
     method = []
     for item_soup in method_list_soup:
-        method.append(item_soup.find('p').text)
+        method.append(item_soup.find('p').get_text())
 
     recipe['method'] = method
     
