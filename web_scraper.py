@@ -28,20 +28,39 @@ def get_category_urls_from_dropdown():
 def get_collections_from_category(category_url):
     soup = get_content_from_url(category_url)
     
-    return[category_heading.find('a').get('href') for category_heading in soup.findAll('h4')]
+    collection_urls = []
 
-lst = []
+    collection_urls.append(category_heading.find('a').get('href') for category_heading in soup.findAll('h4'))
 
-collection_urls = []
-for category_url in get_category_urls_from_dropdown():
-    url = root_url + category_url
+    # check if there is more than one page in the category
+    pagination_urls = get_pagination_urls(soup)
+    print(pagination_urls)
 
-    if 'category' in url:
-        collection_urls.append(get_collections_from_category(url))
-    else:
-        collection_urls.append(url)
 
-print(collection_urls)
+def get_collections_from_category_page(category_page_url):
+    print()
+
+
+def get_pagination_urls(soup):
+    pagination_items = soup.find('div', attrs={'pagination'})
+    print(len(pagination_items))
+    # return [item.find('a').get('href') for item in pagination_items]
+
+
+get_collections_from_category('https://www.bbcgoodfood.com/recipes/category/all-dishes')
+
+# lst = []
+
+# collection_urls = []
+# for category_url in get_category_urls_from_dropdown():
+#     url = root_url + category_url
+
+#     if 'category' in url:
+#         collection_urls.append(get_collections_from_category(url))
+#     else:
+#         collection_urls.append(url)
+
+# print(collection_urls)
     
 
 
