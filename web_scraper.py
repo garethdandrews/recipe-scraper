@@ -21,7 +21,7 @@ def get_category_urls_from_dropdown():
     soup = get_content_from_url(root_url)
     recipes_soup = soup.find('span', attrs={'class': 'main-nav__nav-text'}, text=re.compile("^recipes$", re.I)).parent.next_sibling
     categories_soup = recipes_soup.findChildren('span', text='see more...')
-    return [category_soup.parent.get('href') for category_soup in categories_soup]
+    return [root_url + category_soup.parent.get('href') for category_soup in categories_soup]
 
 
 # gets a list of collections from a category - 'collections' hold the list of recipes on bbcgoodfood
@@ -36,33 +36,22 @@ def get_collections_from_category(category_url):
 
     return collection_urls
     
-    
+
 def get_pagination_urls(soup):
     pagination_items = soup.find('div', attrs={'pagination'})
-    print(len(pagination_items))
+    if pagination_items is None or len(pagination_items) is 1:
+        return []
     pagination_items = pagination_items.findAll('a', attrs={'class': 'pagination-item'})
     return [root_url + item.get('href') for item in pagination_items]
 
 
-x = get_collections_from_category('https://www.bbcgoodfood.com/recipes/category/all-dishes')
+category_urls = get_category_urls_from_dropdown()
 
-print(x)
+collection_urls = []
+for url in category_urls:
+    collection_urls += get_collections_from_category(url)
 
-# lst = []
-
-# collection_urls = []
-# for category_url in get_category_urls_from_dropdown():
-#     url = root_url + category_url
-
-#     if 'category' in url:
-#         collection_urls.append(get_collections_from_category(url))
-#     else:
-#         collection_urls.append(url)
-
-# print(collection_urls)
-    
+print(collection_urls)
+print(len(collection_urls))
 
 
-
-# content = get_content_from_url('https://www.bbcgoodfood.com/recipes/old-delhi-style-butter-chicken')
-# bbcgoodfood.get_recipe(content)
