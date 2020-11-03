@@ -37,6 +37,8 @@ def get_collections_from_category(category_url):
     return collection_urls
     
 
+# gets a list of urls for the other pages in a category/collection that aren't currently selected 
+# e.g. if on page 1 of 3, it will get the urls of pages 2 and 3
 def get_pagination_urls(soup):
     pagination_items = soup.find('div', attrs={'pagination'})
     if pagination_items is None or len(pagination_items) is 1:
@@ -45,13 +47,18 @@ def get_pagination_urls(soup):
     return [root_url + item.get('href') for item in pagination_items]
 
 
+# get a list of categories from the 'recipes' dropdown
 category_urls = get_category_urls_from_dropdown()
 
+# go into each category and get a list of the collections
 collection_urls = []
 for url in category_urls:
     collection_urls += get_collections_from_category(url)
 
-print(collection_urls)
-print(len(collection_urls))
+# go into each collection
+
+# get every recipe
+
+# persist to database
 
 
