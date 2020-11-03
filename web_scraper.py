@@ -44,7 +44,8 @@ def get_collections_from_category_page(category_page_url):
 def get_pagination_urls(soup):
     pagination_items = soup.find('div', attrs={'pagination'})
     print(len(pagination_items))
-    # return [item.find('a').get('href') for item in pagination_items]
+    pagination_items = pagination_items.findAll('a', attrs={'class': 'pagination-item'})
+    return [item.get('href') for item in pagination_items]
 
 
 get_collections_from_category('https://www.bbcgoodfood.com/recipes/category/all-dishes')
