@@ -40,7 +40,7 @@ def get_collections_from_category(category_url):
 # gets a list of recipes from a collection
 def get_recipes_from_collection(collection_url):
     soup = get_content_from_url(collection_url)
-    pages = [collection_url] + get_pagination_urls(collection_url)
+    pages = [collection_url] + get_pagination_urls(soup)
 
     recipe_urls = []
     for url in pages:
@@ -61,18 +61,16 @@ def get_pagination_urls(soup):
 
 
 # get a list of categories from the 'recipes' dropdown
-category_urls = get_category_urls_from_dropdown()
+# category_urls = get_category_urls_from_dropdown()
 
-# go into each category and get a list of the collections
-collection_urls = []
-for url in category_urls:
-    collection_urls += get_collections_from_category(url)
+# # go into each category and get a list of the collections
+# collection_urls = []
+# for url in category_urls:
+#     collection_urls += get_collections_from_category(url)
 
-# go into each collection
-for url in collection_urls:
-    soup = get_content_from_url(url)
-    recipe = bbcgoodfood.get_recipe(soup)
+# # go into each collection
+# for url in collection_urls:
+#     soup = get_content_from_url(url)
+#     recipe = bbcgoodfood.get_recipe(soup)
 
 # persist to database
-
-print(get_recipes_from_collection('https://www.bbcgoodfood.com/recipes/collection/baked-potato-recipes/2'))
