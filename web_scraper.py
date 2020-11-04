@@ -27,15 +27,28 @@ def get_category_urls_from_dropdown():
 # gets a list of collections from a category - 'collections' hold the list of recipes on bbcgoodfood
 def get_collections_from_category(category_url):
     soup = get_content_from_url(category_url)
-    collection_urls = [category_heading.find('a').get('href') for category_heading in soup.findAll('h4')]
+    pages = [category_url] + get_pagination_urls(soup)
 
-    # check if there is more than one page in the category
-    for url in get_pagination_urls(soup):
+    collection_urls = []
+    for url in pages:
         soup = get_content_from_url(url)
-        collection_urls = collection_urls + [category_heading.find('a').get('href') for category_heading in soup.findAll('h4')]
+        collection_urls += [category_heading.find('a').get('href') for category_heading in soup.findAll('h4')]
 
     return collection_urls
-    
+
+
+# gets a list of recipes from a collection
+def get_recipes_from_collection(collection_url):
+    soup = get_content_from_url(collection_url)
+    pages = [collection_url] + get_pagination_urls(collection_url)
+
+    recipe_urls = []
+    for url in pages:
+        soup = get_content_from_url(url)
+        recipe_urls += [a_soup.get('href') for a_soup in soup.findAll('a', attrs={'class': 'standard-card-new__article-title'})]
+
+    return recipe_urls
+
 
 # gets a list of urls for the other pages in a category/collection that aren't currently selected 
 # e.g. if on page 1 of 3, it will get the urls of pages 2 and 3
@@ -56,9 +69,10 @@ for url in category_urls:
     collection_urls += get_collections_from_category(url)
 
 # go into each collection
-
-# get every recipe
+for url in collection_urls:
+    soup = get_content_from_url(url)
+    recipe = bbcgoodfood.get_recipe(soup)
 
 # persist to database
 
-
+print(get_recipes_from_collection('https://www.bbcgoodfood.com/recipes/collection/baked-potato-recipes/2'))
