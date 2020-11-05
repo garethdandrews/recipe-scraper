@@ -61,12 +61,9 @@ def get_pagination_urls(soup):
 
 
 # get a list of categories from the 'recipes' dropdown
-# category_urls = get_category_urls_from_dropdown()
-
-# # go into each category and get a list of the collections
-# collection_urls = []
-# for url in category_urls:
-#     collection_urls += get_collections_from_category(url)
+# go into each category and get a list of the collections
+for category_url in get_category_urls_from_dropdown():
+    collection_urls += get_collections_from_category(url)
 
 # # go into each collection
 # for url in collection_urls:
