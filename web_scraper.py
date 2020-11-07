@@ -53,6 +53,10 @@ def is_url_category_or_collection(url):
 
 # scrapes the recipe data and adds it to the database, if its not already in there
 def process_recipe(url):
+    if recipe_repo.is_recipe_in_db(url):
+        print("Recipe already in DB: {0}".format(url))
+        return
+    
     soup = get_content_from_url(url)
     recipe = None
     try:
@@ -62,11 +66,8 @@ def process_recipe(url):
     
     if recipe is not None:
         recipe['url'] = url
-        res = recipe_repo.insert_if_not_in_db(recipe)
-        if res:
-            print("Added recipe: {0}".format(recipe['title']))
-        else:
-            print("Recipe already in DB: {0}".format(recipe['title']))
+        recipe_repo.insert_one(recipe)
+        print("Added recipe: {0}".format(recipe['title']))
 
 
 # if a url is a category/collection, it gets the headings from those sections and checks again, until it finds a recipe
