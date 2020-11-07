@@ -1,6 +1,6 @@
 import pymongo
 
-connection_string = 'mongodb://127.0.0.1:27017'
+connection_string = 'mongodb://172.17.0.2:27017'
 client = pymongo.MongoClient(connection_string)
 
 database = client['webscraper']
@@ -15,5 +15,8 @@ def find_one(query):
 def insert_one(recipe):
     collection.insert_one(recipe)
 
-def count(query):
+def count():
+    return collection.count_documents({})
+
+def count_query(query):
     return collection.count_documents(query)

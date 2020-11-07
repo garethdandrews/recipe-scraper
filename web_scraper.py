@@ -53,6 +53,7 @@ def is_url_category_or_collection(url):
 
 # if a url is a category/collection, it gets the headings from those sections and checks again, until it finds a recipe
 def process_url(url):
+    print("Processing url: {0}".format(url))
     if is_url_category_or_collection(url):
         [process_url(heading_url) for heading_url in get_headings_from_section(url)]
     else:
