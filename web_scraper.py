@@ -49,6 +49,7 @@ def is_url_category_or_collection(url):
     return re.search("(?<=recipes\/)(category|collection)", url) is not None
     
 
+# if a url is a category/collection, it gets the headings from those sections and checks again, until it finds a recipe
 def process_url(url):
     if is_url_category_or_collection(url):
         [process_url(heading_url) for heading_url in get_headings_from_section(url)]
@@ -56,6 +57,8 @@ def process_url(url):
         soup = get_content_from_url(url)
         recipe = bbcgoodfood.get_recipe(soup)
         recipe_repo.insert_one(recipe)
+        print("Added recipe: {0}".format(recipe['title']))
 
 
+# starts the scraper
 process_url('https://www.bbcgoodfood.com/recipes/category')
