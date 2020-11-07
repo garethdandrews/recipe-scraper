@@ -2,6 +2,12 @@ from bs4 import BeautifulSoup
 import re
 
 def get_recipe(soup):
+    def get_text_if_not_none(class_attrs):
+        text = soup.find(attrs={'class': class_attrs})
+        if text is not None:
+            text = text.get_text()
+        return text
+
     recipe = {}
     recipe['title'] = soup.find('h1').text
 
@@ -13,8 +19,8 @@ def get_recipe(soup):
         tmp = item.parent.previous_sibling.text[:-1]
         metadata[tmp] = item.text
 
-    metadata['difficulty'] = soup.find(attrs={'class': 'masthead__skill-level'}).get_text()
-    metadata['servings'] = soup.find(attrs={'class': 'masthead__servings'}).get_text()
+    metadata['difficulty'] = get_text_if_not_none('masthead__skill-level')
+    metadata['servings'] = get_text_if_not_none('masthead__servings')
 
     recipe['metadata'] = metadata
 
@@ -44,3 +50,6 @@ def get_recipe(soup):
     recipe['method'] = method
 
     return recipe
+
+
+    
