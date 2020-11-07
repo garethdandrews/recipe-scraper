@@ -58,10 +58,13 @@ def process_url(url):
         [process_url(heading_url) for heading_url in get_headings_from_section(url)]
     else:
         soup = get_content_from_url(url)
-        recipe = bbcgoodfood.get_recipe(soup)
-        recipe['url'] = url
-        recipe_repo.insert_one(recipe)
-        print("Added recipe: {0}".format(recipe['title']))
+        try:
+            recipe = bbcgoodfood.get_recipe(soup)
+            recipe['url'] = url
+            recipe_repo.insert_one(recipe)
+            print("Added recipe: {0}".format(recipe['title']))
+        except:
+            print("Skipped recipe with url: {0}".format(url))
 
 
 # starts the scraper
