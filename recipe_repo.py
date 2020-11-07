@@ -14,3 +14,6 @@ def find_one(query):
 
 def insert_one(recipe):
     collection.insert_one(recipe)
+
+def count(query):
+    return collection.count_documents(query)
