@@ -60,15 +60,20 @@ def get_pagination_urls(soup):
     return [root_url + item.get('href') for item in pagination_items]
 
 
+def is_url_category_or_collection(url):
+    return re.search("(?<=recipes\/)(category|collection)", url).group()
+    
+
+
 # get a list of categories from the 'recipes' dropdown
-category_urls = get_category_urls_from_dropdown()
+# category_urls = get_category_urls_from_dropdown()
 
 # check if the url is a category or a collection
 
 # go into each collection blah blah blah
 
 
-for category_url in category_urls:
+# for category_url in category_urls:
     
 
 # # go into each collection
