@@ -21,8 +21,16 @@ def count():
 def count_query(query):
     return collection.count_documents(query)
 
+def find_recipe_by_url(url):
+    return find_one({'url': url})
+
 def insert_if_not_in_db(recipe):
-    if find_one({'url': recipe['url']}) is None:
+    if find_recipe_by_url(recipe['url']) is None:
         insert_one(recipe)
+        return True
+    return False
+
+def is_recipe_in_db(url):
+    if find_recipe_by_url(url):
         return True
     return False
