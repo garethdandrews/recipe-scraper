@@ -51,20 +51,31 @@ def is_url_category_or_collection(url):
     return re.search("(?<=recipes\/)(category|collection)", url) is not None
     
 
+# scrapes the recipe data and adds it to the database, if its not already in there
+def process_recipe(url):
+    soup = get_content_from_url(url)
+    recipe = None
+    try:
+        recipe = bbcgoodfood.get_recipe(soup)
+    except:
+        print("Skipped recipe with url: {0}".format(url))
+    
+    if recipe is not None:
+        recipe['url'] = url
+        res = recipe_repo.insert_if_not_in_db(recipe)
+        if res:
+            print("Added recipe: {0}".format(recipe['title']))
+        else:
+            print("Recipe already in DB: {0}".format(recipe['title']))
+
+
 # if a url is a category/collection, it gets the headings from those sections and checks again, until it finds a recipe
 def process_url(url):
     print("Processing url: {0}".format(url))
     if is_url_category_or_collection(url):
         [process_url(heading_url) for heading_url in get_headings_from_section(url)]
     else:
-        soup = get_content_from_url(url)
-        try:
-            recipe = bbcgoodfood.get_recipe(soup)
-            recipe['url'] = url
-            recipe_repo.insert_one(recipe)
-            print("Added recipe: {0}".format(recipe['title']))
-        except:
-            print("Skipped recipe with url: {0}".format(url))
+        process_recipe(url)
 
 
 # starts the scraper
