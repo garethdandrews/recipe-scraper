@@ -3,13 +3,24 @@ from bs4 import BeautifulSoup
 import re
 import recipe_repo
 
-# if a url is a category/collection, it gets the headings from those sections and checks again, until it finds a recipe
+# iterates through the categories: if a url is a category/collection, it gets the headings from those sections and checks again, until it finds a recipe
 def process_url(url):
     print("Processing url: {0}".format(url))
     if is_url_category_or_collection(url):
         [process_url(heading_url) for heading_url in get_headings_from_section(url)]
     else:
         process_recipe(url)
+
+
+# iterates through the categories: if the url is a collection, it adds the name of the collection each of the recipes
+def process_url_for_tags(url):
+    if is_url_category_or_collection(url):
+        if is_collection(url): # get the heading of the collection and add it to the tag of each recipe
+            soup = get_content_from_url(url)
+            tag = soup.find('h1').text.replace(' recipes', '')
+            [recipe_repo.add_tag_to_recipe(heading_url, tag) for heading_url in get_headings_from_section(url)]
+        else: # url is a category not a collection
+            [process_url(heading_url) for heading_url in get_headings_from_section(url)]
 
 
 # scrapes the recipe data and adds it to the database, if its not already in there
@@ -59,8 +70,14 @@ def get_pagination_urls(soup):
 # returns true if the url points to a category or a collection, but false if it is a recipe
 def is_url_category_or_collection(url):
     return re.search("(?<=recipes\/)(category|collection)", url) is not None
-    
 
+
+# returns true if the url points to a collection, false if not
+def is_collection(url):
+    return re.search("(?<=recipes\/)(collection)", url) is not None
+
+
+# scrapes a recipe from the soup and returns a model
 def get_recipe(soup):
     def get_text_if_not_none(class_attrs):
         text = soup.find(attrs={'class': class_attrs})
