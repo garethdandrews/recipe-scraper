@@ -15,6 +15,9 @@ def find_one(query):
 def insert_one(recipe):
     collection.insert_one(recipe)
 
+def update_one(query, values):
+    collection.update_one(query, values)
+
 def count():
     return collection.count_documents({})
 
@@ -34,3 +37,8 @@ def is_recipe_in_db(url):
     if find_recipe_by_url(url):
         return True
     return False
+
+def add_tag_to_recipe(url, tag):
+    query = {'url': url}
+    values = {'$push': {'tags': tag}}
+    update_one(query, values)

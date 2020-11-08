@@ -46,7 +46,7 @@ def get_pagination_urls(soup):
     return [item.get('href') for item in pagination_items]
 
 
-# returns true if the url points to a category or a collection
+# returns true if the url points to a category or a collection, but false if it is a recipe
 def is_url_category_or_collection(url):
     return re.search("(?<=recipes\/)(category|collection)", url) is not None
     
@@ -80,4 +80,5 @@ def process_url(url):
 
 
 # starts the scraper
-process_url('https://www.bbcgoodfood.com/recipes/category')
+def start():
+    process_url('https://www.bbcgoodfood.com/recipes/category')
