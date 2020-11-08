@@ -19,6 +19,10 @@ def get_content_from_url(url):
     return BeautifulSoup(response.content, 'html.parser')
 
 
-# starts the scraper
+# starts the scraper to add recipes to the database
 def start():
     bbcgoodfood.process_url('https://www.bbcgoodfood.com/recipes/category')
+
+
+def start_tag_search():
+    bbcgoodfood.process_url_for_tags('https://www.bbcgoodfood.com/recipes/category')
