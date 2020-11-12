@@ -34,3 +34,12 @@ FIND THE CORE INGREDIENTS OF A RECIPE
 
 AIM 3:
 CLASSIFY RECIPES INTO CUISINE BASED ON THEIR INGREDIENTS
+
+
+
+
+
+
+###########################################################################################################################
+References:
+https://www.irjet.net/archives/V6/i3/IRJET-V6I328.pdf
