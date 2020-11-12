@@ -1,0 +1,62 @@
+{
+    "_id": ObjectId("5fa6d89db39e66a6addf55f5"),
+    "title": "Old Delhi-style butter chicken",
+    "metadata": {
+        "Prep": "50 mins",
+        "Cook": "1 hr",
+        "difficulty": "Easy",
+        "servings": "Serves 6"
+    },
+    "ingredients": {
+        "main": [
+            "800g boneless and skinless chicken thighs, cut into bite-sized pieces",
+            "coriander leaves, finely sliced red onion, sliced green or red chilli, naan bread or basmati rice, and chutney, to serve"
+        ],
+        "For the marinade": [
+            "120g Greek yogurt",
+            "thumb-sized piece ginger, grated",
+            "4-5 garlic cloves, crushed",
+            "1 tbsp vegetable oil",
+            "1 lemon, juiced",
+            "3 tsp mild chilli powder",
+            "1 tsp ground cumin",
+            "½ tsp garam masala",
+            "½ tsp turmeric"
+        ],
+        "For the sauce": [
+            "1kg ripe vine or plum tomatoes",
+            "thumb-sized piece ginger, peeled, half grated and half finely chopped",
+            "4 garlic cloves, crushed",
+            "4 green cardamom pods",
+            "2 cloves",
+            "1 bay leaf",
+            "1-2 tsp chilli powder",
+            "80g butter, diced",
+            "2 green chillies, cut lengthways",
+            "75ml single cream, plus a drizzle to serve",
+            "5-6 dried fenugreek leaves, crushed between your fingers (optional)",
+            "1 tsp garam masala",
+            "1 tbsp sugar"
+        ],
+        "For the spiced butter (optional)": [
+            "3 tbsp ghee (see below) or butter",
+            "2 tsp black mustard seeds",
+            "1 dried whole Kashmiri chilli",
+            "6-8 dried curry leaves"
+        ]
+    },
+    "method": [
+        "Mix all of the marinade ingredients together in a large mixing bowl with 1½ tsp salt. Add the chicken pieces and mix together until well-coated, then cover the bowl and chill for 1 hr or overnight in the fridge.",
+        "Heat the oven to 240C/220C fan/gas 9. Transfer the chicken pieces to a large baking tray (discard any remaining marinade), and cook for 10-15 mins. Turn the pieces after 10 mins so they colour evenly on both sides. The chicken doesn’t need to be completely cooked through at this point as it will cook for a few more mins in the sauce.",
+        "Meanwhile, for the sauce, slice the tomatoes in half and put in a large pan in a single layer with 125ml water, the grated ginger, garlic, cardamom, cloves and bay leaf. Simmer, covered, until the tomatoes have completely disintegrated, about 20-25 mins. Remove the whole spices and blend the tomato mixture with a stick blender, then pass it through a sieve to make a smooth purée. Return to a clean pan, add the chilli powder and simmer for 12-15 mins. It should slowly begin to thicken. When the sauce turns glossy, add the chicken pieces and any of the reserved roasting juices from the tray.",
+        "Slowly stir in the butter, a couple of pieces at a time, and simmer for 6-8 mins until the chicken is cooked through. Add the chopped ginger, green chillies and cream, then simmer for a min or two longer, taking care that the sauce doesn’t split. Stir in 1 tsp salt, fenugreek leaves, if using, and the garam masala, then check the seasoning, adjust if necessary, then add the sugar. In a separate pan, warm all the ingredients for the spiced butter, if using, until the seeds start to pop (see below). Spoon over the curry, scatter with the coriander, onion, chilli, and a drizzle more cream, if using. Serve with naan, pilau rice and chutney."
+    ],
+    "url": "https: //www.bbcgoodfood.com/recipes/old-delhi-style-butter-chicken",
+    "tags": [
+        "Curry",
+        "Chicken",
+        "Chicken",
+        "Chicken",
+        "Curry"
+    ]
+}
